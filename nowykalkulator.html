@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Wycieczki</title>
+    <style>
+        body {
+            display: block;
+            text-align: left;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #summary {
+            margin-top: 20px;
+            padding: 15px;
+            border-top: 2px solid #ccc;
+            background-color: #f9f9f9;
+        }
+		        #flightDetails {
+            margin-top: 20px;
+            padding: 15px;
+            border-top: 2px solid #ccc;
+            background-color: #f1f1f1;
+        }
+    </style>
+   <script>
+    function updateCost() {
+        let totalCost = 0;
+        let selections = document.querySelectorAll('select, input[type=checkbox]:checked');
+        let summaryText = "<h2>Podsumowanie Wyborów</h2>";
+        let flightDetails = "<h2>Szczegóły Wybranego Lotu</h2>";
+
+        selections.forEach(selection => {
+            let text = selection.options ? selection.options[selection.selectedIndex].text : selection.parentElement.innerText;
+            let value = parseFloat(selection.value) || 0;
+            totalCost += value;
+            summaryText += `<p>${text}</p>`;
+
+            // Szczegóły lotów Warszawa -> Miami i Nowy Jork -> Warszawa
+            let details = {
+                "2898.12": "<strong>TURKISH:</strong> JFK, bagaż: 1 x 8 kg (55x40x23 cm), 2 x 23 kg (suma max 158 cm), lot trwa: 18 h.",
+                "2604.00": "<strong>LOT:</strong> Bezpośredni, JFK/EWR, bagaż: 1 x 8 kg (55x40x23 cm), 1 x 2 kg (40x35x12 cm), lot trwa: 11 h.",
+                "3165.00": "<strong>LOT:</strong> Bezpośredni, JFK/EWR, bagaż: 1 x 8 kg (55x40x23 cm), 1 x 2 kg (40x35x12 cm), 1 x 23 kg (max 158 cm), lot trwa: 11 h.",
+                "2299.00": "<strong>BRITISH:</strong> JFK/EWR, bagaż: 1 x 23 kg (40x30x15 cm), 1 x torebka/plecak, lot trwa: 14 h.",
+                "2885.00": "<strong>BRITISH:</strong> JFK/EWR, bagaż: 1 x 23 kg (40x30x15 cm), 1 x torebka/plecak, 1 x 23 kg (90x75x43 cm), lot trwa: 14 h."
+            };
+            if (details[selection.value]) {
+                flightDetails += `<p>${details[selection.value]}</p>`;
+            }
+
+            // Szczegóły lotów Miami -> Nowy Jork
+            let flightInfo = {
+                "392": "<strong>AMERICAN AIRLINES – EWR:</strong> Bagaż: 1 x brak limitu kg (23x36x56 cm), 1 x brak limitu (torebka/laptop/aktówka). Lot trwa: 3h 10m. Godziny lotów: 08:30-11:39, 13:40-16:40, 19:30-22:34, 21:00-00:02.",
+                "551": "<strong>AMERICAN AIRLINES – EWR:</strong> Bagaż: 1 x brak limitu kg (23x36x56 cm), 1 x brak limitu (torebka/laptop/aktówka), 1 x 23 kg. Lot trwa: 3h 10m. Godziny lotów: 08:30-11:39, 13:40-16:40, 19:30-22:34, 21:00-00:02.",
+                "253JFK": "<strong>AMERICAN AIRLINES – JFK:</strong> Bagaż: 1 x brak limitu kg (23x36x56 cm), 1 x brak limitu (torebka/laptop/aktówka). Lot trwa: 3h. Godziny lotów: 06:35-09:37, 07:27-10:29, 09:04-12:04, 11:55-14:59, 14:34-17:34, 17:44-20:45, 19:30-22:39, 21:17-00:28.",
+                "412JFK": "<strong>AMERICAN AIRLINES – JFK:</strong> Bagaż: 1 x brak limitu kg (23x36x56 cm), 1 x brak limitu (torebka/laptop/aktówka), 1 x 23 kg. Lot trwa: 3h. Godziny lotów: 06:35-09:37, 07:27-10:29, 09:04-12:04, 11:55-14:59, 14:34-17:34, 17:44-20:45, 19:30-22:39, 21:17-00:28.",
+                "253DELTA": "<strong>DELTA – JFK:</strong> Bagaż: 1 x brak limitu kg (suma max 158), 1 x brak limitu (torebka/laptop/aktówka). Lot trwa: 3h 15m. Godziny lotów: 07:30-10:30, 11:35-14:49, 15:35-19:14, 19:30-22:56.",
+                "392.30": "<strong>DELTA – JFK:</strong> Bagaż: 1 x brak limitu kg (suma max 158), 1 x brak limitu (torebka/laptop/aktówka), 1 x 23 kg (suma max 157). Lot trwa: 3h 15m. Godziny lotów: 07:30-10:30, 11:35-14:49, 15:35-19:14, 19:30-22:56."
+            };
+
+            if (flightInfo[selection.value]) {
+                flightDetails += `<p>${flightInfo[selection.value]}</p>`;
+            }
+        });
+
+        // Aktualizacja sumy i wyświetlanie podsumowania
+        document.getElementById('totalCost').innerText = totalCost.toFixed(2) + ' PLN';
+        document.getElementById('summary').innerHTML = summaryText;
+        document.getElementById('flightDetails').innerHTML = flightDetails;
+    }
+</script>
+
+</head>
+<body>
+    <h1>Kalkulator Wycieczki</h1>
+    
+    <h2>Loty Warszawa -> Miami i Nowy Jork -> Warszawa</h2>
+	<select name="lot" onchange="updateCost()">
+ 
+        <option value="0">Wybierz lot</option>
+        <option value="2898.12">TURKISH z dwoma dużymi bagażami – JFK, bagaż: 1 x 8 kg (55 x 40 x 23 cm), 2 x 23 kg (suma max 158 cm), lot trwa: 18 h, tracimy dzień wyjazdu przez późny wylot, długi lot i powrót (2898,12 PLN)</option>
+        <option value="2604.00">LOT bezpośredni z podręcznym – JFK lub EWR, bagaż: 1 x 8 kg (55 x 40 x 23 cm), 1 x 2 kg (40 x 35 x 12 cm), lot trwa: 11 h (2604,00 PLN)</option>
+        <option value="3165.00">LOT bezpośredni z dużym bagażem - JFK lub EWR, bagaż: 1 x 8 kg (55 x 40 x 23 cm), 1 x 2 kg (40 x 35 x 12 cm), 1 x 23 kg (suma max 158 cm), lot trwa: 11 h (3165,00 PLN)</option>
+        <option value="2299.00">BRITISH z podręcznym - JFK lub EWR, bagaż: 1 x 23 kg (40 x 30 x 15 cm), 1 x torebka lub plecak (40 x 30 x 15 cm), lot trwa: 14 h, British Airways pozwala na bagaż podręczny o wadze do 23 kg. Warunek jest jeden - pasażer musi sam być w stanie go podnieść i umieścić w luku nad fotelami. (2299,00 PLN)</option>
+        <option value="2885.00">BRITISH z dużym bagażembagażem - JFK lub EWR, bagaż: 1 x 23 kg (40 x 30 x 15 cm), 1 x torebka lub plecak (40 x 30 x 15 cm), 1 x 23 kg (90 x 75 x 43 cm), lot trwa: 14 h, British Airways pozwala na bagaż podręczny o wadze do 23 kg. Warunek jest jeden - pasażer musi sam być w stanie go podnieść i umieścić w luku nad fotelami. (2885,00 PLN)</option>
+    </select>
+    
+    <h2>Hotele</h2>
+        <select name="hotel" onchange="updateCost()">
+        <option value="0">Wybierz hotel</option>
+        <option value="1700">Budżetowo (1700 PLN)</option>
+        <option value="1200">Bardzo budżetowo (1200 PLN)</option>
+    </select>
+    
+    <h2>Rejs Miami -> Nassau -> Ocean Cay -> Miami</h2>
+    <select onchange="updateCost()">
+        <option value="0">Wybierz kabinę</option>
+        <option value="1722.24">Wewnętrzna 2 os (1722,24 PLN)</option>
+        <option value="1611.31">Wewnętrzna 3 os (1611,31 PLN)</option>
+        <option value="1535.04">Wewnętrzna 4 os (1535,04 PLN)</option>
+        <option value="1930.24">Okno 2 os (1930,24 PLN)</option>
+        <option value="1749.97">Okno 3 os (1749,97 PLN)</option>
+        <option value="1659.84">Okno 4 os (1659,84 PLN)</option>
+        <option value="2179.84">Balkon 2 os (2179,84 PLN)</option>
+        <option value="1957.97">Balkon 3 os (1957,97 PLN)</option>
+        <option value="1847.04">Balkon 4 os (1847,04 PLN)</option>
+    </select>
+    
+    <h2>Wynajem samochodu na Florydzie</h2>
+        <select name="car" onchange="updateCost()">
+        <option value="0">Wybierz auto</option>
+        <option value="150">SUV klasy premium np. Lincoln Navigator lub Chevrolet Suburban (150 PLN)</option>
+        <option value="120">VAN np. Ford Transit (120 PLN/dzień)</option>
+        <option value="160">Samochód sportowy klasy średniej np. Dodge Challenger (160 PLN)</option>
+    </select>
+    
+    <h2>Lot Miami -> Nowy Jork</h2>
+        <select name="lot_miami_ny" onchange="updateCost()">
+        <option value="0">Wybierz lot</option>
+        <option value="392">AMERICAN AIRLINES z podręcznym EWR, bagaż: 1 x brak limitu kg (23 x 36 x 56 cm), 1 x brak limitu (torebka / laptop / aktówka), lot trwa: 3 h 10 m, godziny lotów: 08:30-11:39, 13:40-16:40, 19:30-22:34, 21:00-00:02 (392 PLN)</option>
+        <option value="551">AMERICAN AIRLINES z dużym bagażem EWR, bagaż: 1 x brak limitu kg (23 x 36 x 56 cm), 1 x brak limitu (torebka / laptop / aktówka), 1 x 23 kg, lot trwa: 3 h 10 m, godziny lotów: 08:30-11:39, 13:40-16:40, 19:30-22:34, 21:00-00:02 (551 PLN)</option>
+        <option value="253">AMERICAN AIRLINES z podręcznym JFK, bagaż: 1 x brak limitu kg (23 x 36 x 56 cm), 1 x brak limitu (torebka / laptop / aktówka), lot trwa: 3h, godziny lotów: 06:35-09:37, 07:27-10:29, 09:04-12:04, 11:55-14:59, 14:34-17:34, 17:44-20:45, 19:30-22:39, 21:17-00:28 (253 PLN)</option>
+        <option value="412">AMERICAN AIRLINES z dużym bagażem JFK, bagaż: 1 x brak limitu kg (suma max 158), 1 x brak limitu (torebka / laptop / aktówka), lot trwa: 3 h 15 m, godziny lotów: 07:30-10:30, 11:35-14:49, 15:35-19:14, 19:30-22:56 (412 PLN)</option>
+        <option value="253">DELTA z podręcznym JFK, bagaż: 1 x brak limitu kg (suma max 158), 1 x brak limitu (torebka / laptop / aktówka), lot trwa: 3 h 15 m, godziny lotów: 07:30-10:30, 11:35-14:49, 15:35-19:14, 19:30-22:56 (253 PLN)</option>
+        <option value="392.30">DELTA z dużym bagażem JFK, bagaż: 1 x brak limitu kg (suma max 158), 1 x brak limitu (torebka / laptop / aktówka), 1 x 23 kg (suma max 157), lot trwa: 3 h 15 m, godziny lotów: 07:30-10:30, 11:35-14:49, 15:35-19:14, 19:30-22:56 (392,30 PLN)</option>
+    </select>
+    
+    <h2>Wynajem samochodu w Nowym Jorku</h2>
+    <select onchange="updateCost()">
+        <option value="0">Wybierz auto</option>
+        <option value="410">JFK	SUV klasy premium np. Chevrolet Suburban (410 PLN)</option>
+        <option value="360">EWR	SUV klasy premium np. Chevrolet Suburban  (360 PLN)</option>
+        <option value="536.50">JFK	mini VAN np. Chrysler Pacifica (536,50 PLN)</option>
+        <option value="338.83">EWR	mini VAN np. Chrysler Pacifica (338,83 PLN)</option>
+    </select>
+    
+      <h2>Atrakcje Dzień 1</h2>
+    <label><input type="checkbox" value="0" onchange="updateCost()"> Spacer po Miami (South Beach, Ocean Drive, Little Havana), czas: 4 h, koszt: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="80" onchange="updateCost()"> Skyviews Miami Observation Wheel, czas: 15 m, koszt: 80,00</label><br>
+    <label><input type="checkbox" value="160" onchange="updateCost()"> Everglades Alligator Farm (pokaz dzikich zwierząt i wycieczkę łodzią powietrzną), czas: 5 h, koszt: 160,00 PLN</label><br>
+    <label><input type="checkbox" value="150" onchange="updateCost()"> Key West, czas: 14 h, koszt: 150,00 PLN</label><br>
+    <label><input type="checkbox" value="240" onchange="updateCost()"> Key West + Aquarium, czas: 14 h, koszt: 240,00 PLN</label><br>
+    <label><input type="checkbox" value="300" onchange="updateCost()"> Key West + Aquarium + Dom i muzeum Ernesta Hemingwaya, czas: 14 h, koszt: 300,00 PLN</label><br>
+    <label><input type="checkbox" value="210" onchange="updateCost()"> Key West + Dom i muzeum Ernesta Hemingwaya, czas: 14 h, koszt: 210,00 PLN</label><br>
+    
+    <h2>Atrakcje Dzień 6</h2>
+    <label><input type="checkbox" value="0" onchange="updateCost()"> Spacer po Miami (South Beach, Ocean Drive, Little Havana), czas: 4 h, koszt: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="80" onchange="updateCost()"> Skyviews Miami Observation Wheel, czas: 15 m, koszt: 80,00 PLN</label><br>
+    <label><input type="checkbox" value="160" onchange="updateCost()"> Everglades Alligator Farm (pokaz dzikich zwierząt i wycieczkę łodzią powietrzną), czas: 3 h, koszt: 160,00 PLN</label><br>
+    <label><input type="checkbox" value="150" onchange="updateCost()"> Key West (Key West (Mallory Square, Mile 0 – koniec drogi US-1, Fort Zachary Taylor State Park & Beach), czas: 14 h, koszt: 60,00 PLN</label><br>
+    <label><input type="checkbox" value="70" onchange="updateCost()"> Key West (Key West (Mallory Square, Mile 0 – koniec drogi US-1, Fort Zachary Taylor State Park & Beach) + Aquarium, czas: 14 h, koszt: 70,00 PLN</label><br>
+    <label><input type="checkbox" value="215" onchange="updateCost()"> Key West + Aquarium + Dom i muzeum Ernesta Hemingwaya, czas: 14 h, koszt: 215,00 PLN</label><br>
+    <label><input type="checkbox" value="130" onchange="updateCost()">Key West (Key West (Mallory Square, Mile 0 – koniec drogi US-1, Fort Zachary Taylor State Park & Beach) + Dom i muzeum Ernesta Hemingwaya, czas: 14 h, koszt: 130,00 PLN</label><br>
+    <label><input type="checkbox" value="150" onchange="updateCost()"> Oceanarium SEA LIFE Orlando (jedyny na Florydzie 360-stopniowy tunel z rybami wokół siebie), czas: 2 h, koszt: 150,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()"> Universal CityWalk (darmowa strefa z restauracjami i sklepami tuż przy wejściu do parków Universal. Można poczuć klimat Universal Studios bez kupowania biletu, po 18 darmowy parking), czas: 2 h, koszt: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()">Disney Springs – darmowe centrum rozrywki i zakupów Disneya, idealne, jeśli nie masz czasu na pełny dzień w parku, czas: 2 h, koszt: 0,00 PLN</label><br>
+    
+    <h2>Atrakcje Dzień 7</h2>
+    <label><input type="checkbox" value="316" onchange="updateCost()"> Centrum Lotów Kosmicznych im Johna F. Kennedy’ego na Florydzie, czas: 6 h, koszt: 316,00 PLN</label><br>
+    <label><input type="checkbox" value="480" onchange="updateCost()"> Universal Studios Orlando, czas: 8 h, koszt: 480,00 PLN</label><br>
+    <label><input type="checkbox" value="916" onchange="updateCost()"> Universal Studios Orlando z express pass, czas: 6 h, koszt: 916,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()"> Orlando International Premium Outlets, czas: 6 h, koszt:: 0,00 PLN</label><br>
+    
+     <h2>Atrakcje Dzień 8</h2>
+    <label><input type="checkbox" value="316" onchange="updateCost()">  Centrum Lotów Kosmicznych im Johna F. Kennedy’ego na Florydzie, czas: 6 h, koszt: 316,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()">  Orlando International Premium Outlets, czas: 4 h, koszt:: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="160" onchange="updateCost()">  Everglades Alligator Farm (pokaz dzikich zwierząt i wycieczkę łodzią powietrzną), czas: 3 h, koszt: 160,00 PLN</label><br>
+    <label><input type="checkbox" value="150" onchange="updateCost()">  Oceanarium SEA LIFE Orlando (jedyny na Florydzie 360-stopniowy tunel z rybami wokół siebie), czas: 2 h, koszt: 150,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()">  Spacer po Miami (South Beach, Ocean Drive, Little Havana), czas: 4 h, koszt: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()">  Wczesny lot do NY, spacer po NY i kolacja w China Towin lub walamrt, rose i kolacja w domu czas: 4 h, koszt: 0,00 PLN</label><br>
+    <label><input type="checkbox" value="0" onchange="updateCost()">  Wczesny lot do NY, Filadelfia (Independence Hall, Liberty Bell, Rocky Steps) i przejazd do Waszyngtonu (Lincoln Memorial nocą), na powrocie następnego dnia zakupy w deleware, czas: 5 h, koszt: 0,00 PLN</label><br>
+	
+	<h2>Atrakcje Dzień 9-12</h2>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> W przypadku wczesnego powrotu 8 dnia i przejazdu do Waszyngtonu, Waszyngton (Biały dom, National Mall, Smithsonian National Air and Space Museum), zakupy w Delaware i powrót do Nowego Jorku, czas: 6 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Finadelfia (Independence Hall, Liberty Bell, Rocky Steps) + zakupy w Delaware, czas: 4 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Finadelfia (Independence Hall, Liberty Bell, Rocky Steps) + wioska amiszów + zakupy w Delaware, czas: 6 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()">  Waszyngton (Biały dom, National Mall, Smithsonian National Air and Space Museum) + Finadelfia (Independence Hall, Liberty Bell, Rocky Steps) + zakupy w Delaware, czas: 12 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()">  Waszyngton (Biały dom, National Mall, Smithsonian National Air and Space Museum) + Finadelfia (Independence Hall, Liberty Bell, Rocky Steps) + zakupy w Delaware + Lancester (wioska amiszów), czas: 14 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()">  Boston, czas: 12 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Central Park, czas: 2 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="100" onchange="updateCost()"> MoMA (Museum of Modern Art), czas: 2 h, koszt: 100,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Times Square, czas: 2 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="400" onchange="updateCost()"> Broadway Show, czas: 4 h, koszt: 400,00 PLN</label><br>
+        <label><input type="checkbox" value="180" onchange="updateCost()"> Rejs na Ellis Island i statua wolności z bliska, czas: 4 h, koszt: 180,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Statua Wolności rejs promem ze Staten Island, czas: 1 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="102" onchange="updateCost()"> Muzeum 9/11, czas: 2 h, koszt: 102,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Brooklyn Bridge, Brooklyn Heights i DUMBO, czas: 4 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="175" onchange="updateCost()"> Empire State Building, czas: 2 h, koszt: 175,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> China Town, czas: 2 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> The Vessel (Hudson Yards), czas: 1 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="160" onchange="updateCost()"> Inny taras widokowy, czas: 2 h, koszt: 160,00 PLN</label><br>
+        <label><input type="checkbox" value="90" onchange="updateCost()"> Katz's Deli Katz's Reuben, czas: 1 h, koszt: 90,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> The Battery, czas: 1 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> WNYC Transmitter Park, czas: 1 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Grand Central Terminal, czas: 10 m, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Empire Outlets Staten Island, czas: 2 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> ROSS, Marshalls i TJ-MAXX, czas: dużo, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Woodbury Common Premium Outlets (ponad 250 sklepów, częściowo niższy tax), czas: 4 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Jersey Gardens The Mills at Jersey Gardens (centrum outletowe, brak tax na ubrania I buty), czas: 4 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="55" onchange="updateCost()"> ZOO Central Park, czas: 1 h, koszt: 55,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Liberty State Park, czas: 1 h, koszt: 0,00 PLN</label><br>
+        <label><input type="checkbox" value="600" onchange="updateCost()"> The New York Pass na 1 dzień (np. 3 tarasy, zoo, big bus i muzeum), czas: 12 h, koszt: 600,00 PLN</label><br>
+        <label><input type="checkbox" value="0" onchange="updateCost()"> Pier 57 Rooftop Park, czas: 1 h, koszt: 0,00 PLN</label><br>
+    
+    <h3 id="totalCost">0 PLN</h3>
+	    <div id="summary">
+        <h2>Podsumowanie Wyborów</h2>
+        <p>Wybory pojawią się tutaj po dokonaniu wyboru.</p>
+    </div>
+</body>
+</html>
